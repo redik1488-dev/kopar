@@ -375,8 +375,9 @@ export default function App() {
           };
           await setDoc(doc(db, 'images', id), newImage);
           setActiveImageId(id);
-        } catch (error) {
+        } catch (error: any) {
           console.error("Error uploading image:", error);
+          alert(`Помилка завантаження зображення у Firebase Storage: ${error.message}\n\nЙмовірно, у вас не активований Storage або закриті правила безпеки.`);
         }
       };
       img.src = dataUrl;
