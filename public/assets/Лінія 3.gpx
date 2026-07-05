@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gpx version="1.1" creator="Kopar" xmlns="http://www.topografix.com/GPX/1/1">
+  <trk>
+    <name>Лінія 3</name>
+    <trkseg>
+      <trkpt lat="49.6484275582231" lon="23.856500387191776"></trkpt>
+      <trkpt lat="49.64846229153009" lon="23.856516480445865"></trkpt>
+      <trkpt lat="49.64848660483024" lon="23.856462836265568"></trkpt>
+      <trkpt lat="49.648490078157856" lon="23.85640382766724"></trkpt>
+      <trkpt lat="49.64845881820052" lon="23.856366276741028"></trkpt>
+      <trkpt lat="49.64846229153009" lon="23.856301903724674"></trkpt>
+      <trkpt lat="49.64850397146577" lon="23.856323361396793"></trkpt>
+      <trkpt lat="49.648531758069744" lon="23.856344819068912"></trkpt>
+      <trkpt lat="49.648531758069744" lon="23.85640382766724"></trkpt>
+      <trkpt lat="49.648517864769744" lon="23.856484293937687"></trkpt>
+      <trkpt lat="49.64850049813918" lon="23.85654866695404"></trkpt>
+      <trkpt lat="49.6484449248797" lon="23.856570124626163"></trkpt>
+      <trkpt lat="49.648413664893354" lon="23.85654330253601"></trkpt>
+    </trkseg>
+  </trk>
+</gpx>
