@@ -33,32 +33,32 @@ export default function Toolbar({
   onSetViewMode,
 }: ToolbarProps) {
   return (
-    <header className="fixed top-0 left-0 right-0 h-14 bg-[rgba(28,25,23,0.92)] backdrop-blur-md border-b border-[#44403C] z-[1000] flex items-center px-3 gap-2">
+    <header className="fixed top-0 left-0 right-0 h-14 bg-[rgba(28,25,23,0.92)] backdrop-blur-md border-b border-[#44403C] z-[1000] flex items-center px-2 md:px-3 gap-1 md:gap-2 overflow-x-auto no-scrollbar">
       {/* Sidebar toggle */}
       <button
         onClick={onToggleSidebar}
-        className="flex items-center justify-center w-9 h-9 bg-[#292524] border border-[#44403C] rounded-lg text-[#F5F0E8] hover:bg-[#44403C] transition-colors active:scale-95"
+        className="flex-shrink-0 flex items-center justify-center w-9 h-9 bg-[#292524] border border-[#44403C] rounded-lg text-[#F5F0E8] hover:bg-[#44403C] transition-colors active:scale-95"
       >
         <Menu size={18} />
       </button>
 
       {/* Logo */}
-      <div className="flex items-center gap-2 mr-4">
-        <div className="flex items-center justify-center w-8 h-8 bg-[#D4A843] rounded-lg">
+      <div className="flex items-center gap-2 mr-1 md:mr-4 flex-shrink-0">
+        <div className="flex items-center justify-center w-8 h-8 bg-[#D4A843] rounded-lg hidden sm:flex">
           <Pickaxe size={18} className="text-[#1C1917]" />
         </div>
-        <span className="text-lg font-bold text-[#D4A843] font-[Playfair_Display] tracking-tight">КОПАР</span>
+        <span className="text-base md:text-lg font-bold text-[#D4A843] font-[Playfair_Display] tracking-tight hidden sm:inline">КОПАР</span>
       </div>
 
       {/* Spacer */}
-      <div className="flex-1" />
+      <div className="flex-1 min-w-[4px]" />
 
       {/* Controls */}
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-1.5 md:gap-2 flex-shrink-0">
         <button
           onClick={onLocateMe}
           title="Моя позиція"
-          className={`flex items-center justify-center w-9 h-9 rounded-lg transition-all active:scale-95 ${
+          className={`flex items-center justify-center w-9 h-9 rounded-lg transition-all active:scale-95 flex-shrink-0 ${
             hasLocation
               ? 'bg-[#22C55E] text-white'
               : 'bg-[#292524] border border-[#44403C] text-[#F5F0E8] hover:border-[#D4A843]'
@@ -73,7 +73,7 @@ export default function Toolbar({
             else onSetViewMode('all');
           }}
           title={viewMode === 'all' ? 'Монети + Маршрути' : viewMode === 'waypoints_only' ? 'Тільки монети' : 'Тільки маршрути'}
-          className={`flex items-center justify-center w-9 h-9 rounded-lg transition-all active:scale-95 ${
+          className={`flex items-center justify-center w-9 h-9 rounded-lg transition-all active:scale-95 flex-shrink-0 ${
             viewMode === 'tracks_only'
               ? 'bg-[#292524] border border-[#44403C] text-[#A8A29E] hover:border-[#D4A843]'
               : 'bg-[#D4A843] text-[#1C1917]'
@@ -87,52 +87,57 @@ export default function Toolbar({
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><line x1="2" y1="2" x2="22" y2="22"/></svg>
           )}
         </button>
-        <LayerSwitcher currentLayer={currentLayer} onLayerChange={onLayerChange} />
-        <GpxUploader onUpload={onImportGpx} />
-        <div className="flex items-center gap-1 bg-[#292524] border border-[#44403C] rounded-lg p-0.5">
+        <div className="flex-shrink-0 hidden sm:block">
+          <LayerSwitcher currentLayer={currentLayer} onLayerChange={onLayerChange} />
+        </div>
+        <div className="flex-shrink-0 hidden sm:block">
+          <GpxUploader onUpload={onImportGpx} />
+        </div>
+        
+        <div className="flex items-center gap-0.5 md:gap-1 bg-[#292524] border border-[#44403C] rounded-lg p-0.5 flex-shrink-0">
           <button
             onClick={() => onSetDrawModeType('zone')}
-            className={`px-3 py-2 rounded-md text-sm font-medium transition-all ${
+            className={`px-2 md:px-3 py-1.5 md:py-2 rounded-md text-sm font-medium transition-all flex items-center ${
               drawModeType === 'zone'
                 ? 'bg-[#D4A843] text-[#1C1917]'
                 : 'text-[#F5F0E8] hover:bg-[#44403C]'
             }`}
             title="Прямокутна зона"
           >
-            <SquareDashed size={16} className="inline mr-1" />
-            Зона
+            <SquareDashed size={16} className="md:mr-1" />
+            <span className="hidden md:inline">Зона</span>
           </button>
           <button
             onClick={() => onSetDrawModeType('line')}
-            className={`px-3 py-2 rounded-md text-sm font-medium transition-all ${
+            className={`px-2 md:px-3 py-1.5 md:py-2 rounded-md text-sm font-medium transition-all flex items-center ${
               drawModeType === 'line'
                 ? 'bg-[#D4A843] text-[#1C1917]'
                 : 'text-[#F5F0E8] hover:bg-[#44403C]'
             }`}
             title="Лінія"
           >
-            <Minus size={16} className="inline mr-1" />
-            Лінія
+            <Minus size={16} className="md:mr-1" />
+            <span className="hidden md:inline">Лінія</span>
           </button>
           <button
             onClick={() => onSetDrawModeType('measure')}
-            className={`px-3 py-2 rounded-md text-sm font-medium transition-all ${
+            className={`px-2 md:px-3 py-1.5 md:py-2 rounded-md text-sm font-medium transition-all flex items-center ${
               drawModeType === 'measure'
                 ? 'bg-[#D4A843] text-[#1C1917]'
                 : 'text-[#F5F0E8] hover:bg-[#44403C]'
             }`}
             title="Лінійка"
           >
-            <Ruler size={16} className="inline mr-1" />
-            Лінійка
+            <Ruler size={16} className="md:mr-1" />
+            <span className="hidden md:inline">Лінійка</span>
           </button>
         </div>
         {drawModeType !== null && (
           <button
             onClick={onCancel}
-            className="px-3 py-2.5 rounded-lg text-sm font-medium bg-[#EF4444] text-white hover:bg-[#dc2626] transition-all"
+            className="px-2 md:px-3 py-1.5 md:py-2.5 rounded-lg text-sm font-medium bg-[#EF4444] text-white hover:bg-[#dc2626] transition-all flex-shrink-0"
           >
-            Скасувати ({drawPointsCount})
+            <span className="hidden md:inline">Скасувати</span> ({drawPointsCount})
           </button>
         )}
       </div>
