@@ -5,7 +5,6 @@ import Sidebar from '@/components/Sidebar';
 import WaypointModal from '@/components/WaypointModal';
 import { useFirestoreCollection } from '@/hooks/useFirestoreCollection';
 import { useFirestoreDoc } from '@/hooks/useFirestoreDoc';
-import { useImageStorage } from '@/hooks/useImageStorage';
 import { db, storage } from '@/lib/firebase';
 import { doc, updateDoc, deleteDoc, setDoc, writeBatch } from 'firebase/firestore';
 import { ref, uploadString, getDownloadURL, deleteObject } from 'firebase/storage';
