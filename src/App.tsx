@@ -519,6 +519,24 @@ export default function App() {
         onSetViewMode={setViewMode}
       />
 
+      {/* Floating Image Controls (Visible when image is selected, mainly for mobile) */}
+      {activeImageId && (
+        <div className="fixed top-16 left-1/2 -translate-x-1/2 z-[1000] bg-[rgba(28,25,23,0.92)] backdrop-blur-md border border-[#44403C] rounded-lg p-2 flex items-center gap-2 md:hidden w-[90%] max-w-sm shadow-xl">
+          <span className="text-xs text-[#A8A29E] font-medium whitespace-nowrap">Прозор.</span>
+          <input
+            type="range"
+            min={0}
+            max={100}
+            value={Math.round((images.find(img => img.id === activeImageId)?.opacity || 0) * 100)}
+            onChange={(e) => handleUpdateImageOpacity(activeImageId, parseInt(e.target.value) / 100)}
+            className="flex-1 h-1.5 bg-[#44403C] rounded-full appearance-none cursor-pointer accent-[#D4A843]"
+          />
+          <span className="text-xs text-[#F5F0E8] font-medium w-8 text-right">
+            {Math.round((images.find(img => img.id === activeImageId)?.opacity || 0) * 100)}%
+          </span>
+        </div>
+      )}
+
       <Sidebar
         isOpen={sidebarOpen}
         onToggle={() => setSidebarOpen((s) => !s)}
