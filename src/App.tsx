@@ -5,11 +5,36 @@ import Sidebar from '@/components/Sidebar';
 import WaypointModal from '@/components/WaypointModal';
 import { useFirestoreCollection } from '@/hooks/useFirestoreCollection';
 import { useFirestoreDoc } from '@/hooks/useFirestoreDoc';
-import { db, storage } from '@/lib/firebase';
+import { db } from '@/lib/firebase';
 import { doc, updateDoc, deleteDoc, setDoc, writeBatch } from 'firebase/firestore';
-import { ref, uploadString, getDownloadURL, deleteObject } from 'firebase/storage';
 import { getIDB } from '@/hooks/useImageStorage';
 import type { GpxTrack, Zone, MapLine, MapLayerType, TrackPoint, ImageOverlay, Waypoint, Find } from '@/types';
+
+function compressImage(dataUrl: string, maxWidth = 1600, quality = 0.7): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => {
+      let width = img.width;
+      let height = img.height;
+      if (width > maxWidth) {
+        height = Math.round((height * maxWidth) / width);
+        width = maxWidth;
+      }
+      const canvas = document.createElement('canvas');
+      canvas.width = width;
+      canvas.height = height;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) {
+        resolve(dataUrl);
+        return;
+      }
+      ctx.drawImage(img, 0, 0, width, height);
+      resolve(canvas.toDataURL('image/jpeg', quality));
+    };
+    img.onerror = () => reject(new Error('Cannot load image for compression'));
+    img.src = dataUrl;
+  });
+}
 
 function HaversineDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {
   const R = 6371; // km
@@ -144,26 +169,23 @@ function useMigrateData() {
       }
 
       // Migrate images from IndexedDB
-      const migratedImages = localStorage.getItem('kopar-images-migrated');
+      const migratedImages = localStorage.getItem('kopar-images-migrated-v2');
       if (!migratedImages) {
         try {
           const localImages = await getIDB<ImageOverlay[]>('kopar-images');
           if (localImages && localImages.length > 0) {
-            console.log('Migrating images to Firebase Storage...');
+            console.log('Migrating images to Firestore (compressed)...');
             for (const img of localImages) {
+              let finalDataUrl = img.dataUrl;
               if (img.dataUrl.startsWith('data:image')) {
-                const storageRef = ref(storage, `images/${img.id}`);
-                await uploadString(storageRef, img.dataUrl, 'data_url');
-                const downloadUrl = await getDownloadURL(storageRef);
-                const newImg = { ...img, dataUrl: downloadUrl };
-                await setDoc(doc(db, 'images', img.id), newImg);
-              } else {
-                await setDoc(doc(db, 'images', img.id), img);
+                finalDataUrl = await compressImage(img.dataUrl);
               }
+              const newImg = { ...img, dataUrl: finalDataUrl };
+              await setDoc(doc(db, 'images', img.id), newImg);
             }
             console.log('Images successfully migrated.');
           }
-          localStorage.setItem('kopar-images-migrated', 'true');
+          localStorage.setItem('kopar-images-migrated-v2', 'true');
         } catch (err) {
           console.error('Image migration failed:', err);
         }
@@ -356,14 +378,12 @@ export default function App() {
         const id = `img-${Date.now()}`;
         
         try {
-          const storageRef = ref(storage, `images/${id}`);
-          await uploadString(storageRef, dataUrl, 'data_url');
-          const downloadUrl = await getDownloadURL(storageRef);
+          const compressedDataUrl = await compressImage(dataUrl);
           
           const newImage: ImageOverlay = {
             id,
             name: file.name,
-            dataUrl: downloadUrl,
+            dataUrl: compressedDataUrl,
             bounds: {
               southWest: [centerLat - baseHeightDeg / 2, centerLng - baseWidthDeg / 2],
               northEast: [centerLat + baseHeightDeg / 2, centerLng + baseWidthDeg / 2],
@@ -376,8 +396,8 @@ export default function App() {
           await setDoc(doc(db, 'images', id), newImage);
           setActiveImageId(id);
         } catch (error: any) {
-          console.error("Error uploading image:", error);
-          alert(`Помилка завантаження зображення у Firebase Storage: ${error.message}\n\nЙмовірно, у вас не активований Storage або закриті правила безпеки.`);
+          console.error("Error saving image:", error);
+          alert(`Помилка збереження зображення: ${error.message}`);
         }
       };
       img.src = dataUrl;
@@ -391,11 +411,6 @@ export default function App() {
   }, [images]);
 
   const handleDeleteImage = useCallback(async (id: string) => {
-    try {
-      await deleteObject(ref(storage, `images/${id}`));
-    } catch (e) {
-      console.warn("Could not delete from storage, might not exist", e);
-    }
     await deleteDoc(doc(db, 'images', id));
     if (activeImageId === id) setActiveImageId(null);
   }, [activeImageId]);
