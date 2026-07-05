@@ -521,7 +521,7 @@ export default function App() {
 
       {/* Floating Image Controls (Visible when image is selected, mainly for mobile) */}
       {activeImageId && (
-        <div className="fixed top-16 left-1/2 -translate-x-1/2 z-[1000] bg-[rgba(28,25,23,0.92)] backdrop-blur-md border border-[#44403C] rounded-lg p-2 flex items-center gap-2 md:hidden w-[90%] max-w-sm shadow-xl">
+        <div className="fixed top-16 left-1/2 -translate-x-1/2 z-[1000] bg-[#1C1917] border border-[#44403C] rounded-lg p-2 flex items-center gap-2 md:hidden w-[90%] max-w-sm shadow-xl">
           <span className="text-xs text-[#A8A29E] font-medium whitespace-nowrap">Прозор.</span>
           <input
             type="range"

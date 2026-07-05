@@ -33,7 +33,7 @@ export default function Toolbar({
   onSetViewMode,
 }: ToolbarProps) {
   return (
-    <header className="fixed top-0 left-0 right-0 h-14 bg-[rgba(28,25,23,0.92)] backdrop-blur-md border-b border-[#44403C] z-[1000] flex items-center px-2 md:px-3 gap-1 md:gap-2 overflow-x-auto no-scrollbar">
+    <header className="fixed top-0 left-0 right-0 h-14 bg-[#1C1917] border-b border-[#44403C] z-[1000] flex items-center px-2 md:px-3 gap-1 md:gap-2 overflow-x-auto no-scrollbar">
       {/* Sidebar toggle */}
       <button
         onClick={onToggleSidebar}

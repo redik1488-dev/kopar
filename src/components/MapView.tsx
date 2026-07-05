@@ -159,6 +159,8 @@ export default function MapView({
       scrollWheelZoom: true,
       zoomControl: true,
       attributionControl: true,
+      preferCanvas: true,
+      renderer: L.canvas({ padding: 0.5 }),
     });
 
     mapRef.current = map;
@@ -610,7 +612,7 @@ export default function MapView({
 
     const currentImageIds = new Set(images.filter((img) => img.visible).map((img) => img.id));
 
-    // Clean up removed overlays first
+    // Remove overlays that no longer exist or are hidden
     Object.keys(imageLayersRef.current).forEach((id) => {
       if (!currentImageIds.has(id)) {
         const overlay = imageLayersRef.current[id];
@@ -625,14 +627,19 @@ export default function MapView({
     images.forEach((image) => {
       if (!image.visible) return;
 
-      if (imageLayersRef.current[image.id]) {
-        const existingOverlay = imageLayersRef.current[image.id];
-        if ((existingOverlay as any)._koparCleanup) {
-          (existingOverlay as any)._koparCleanup();
-        }
-        map.removeLayer(existingOverlay);
+      const existing = imageLayersRef.current[image.id];
+
+      if (existing) {
+        // Only update opacity and bounds in-place — no recreation!
+        existing.setOpacity(image.opacity);
+        existing.setBounds(L.latLngBounds(
+          [image.bounds.southWest[0], image.bounds.southWest[1]],
+          [image.bounds.northEast[0], image.bounds.northEast[1]],
+        ));
+        return;
       }
 
+      // New overlay — create it
       const imgOverlay = L.imageOverlay(
         image.dataUrl,
         [
